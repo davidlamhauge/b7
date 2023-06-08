@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:b7/do_task.dart';
+import 'package:b7/create_task.dart';
 
 void main() => runApp(const MyApp());
 
@@ -38,7 +38,7 @@ class MyHome extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const DoTask()),
+                          MaterialPageRoute(builder: (context) => const CreateTask()),
                       );
                     },
                     child: const Text(

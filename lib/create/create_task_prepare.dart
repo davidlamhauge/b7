@@ -95,7 +95,7 @@ class _CreateTaskPrepareState extends State<CreateTaskPrepare> {
             ),
             decoration: const InputDecoration(
               hintText: 'Unikt opgave-id',
-              helperText: 'Opgavens unikke navn, (Ingen mellemrum!)',
+              helperText: 'Opgavens unikke navn, (Ingen mellemrum eller \'#\')',
               contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
             ),
           ),
@@ -115,7 +115,7 @@ class _CreateTaskPrepareState extends State<CreateTaskPrepare> {
                       );
                     }, child: const Text('OK'),
                   )
-                : const SizedBox(height: 1),
+                : const SizedBox(width: 20),
           ]),
         ],
       ),

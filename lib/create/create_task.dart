@@ -35,6 +35,7 @@ class _CreateTaskState extends State<CreateTask> {
         body: Center(
             child: Column(
           children: [
+            const SizedBox(height: 10),
             Center(
               child: Column(
                 children: [
@@ -55,42 +56,42 @@ class _CreateTaskState extends State<CreateTask> {
                 ],
               ),
             ),
+            const SizedBox(height: 10),
             SizedBox(
-              height: 300,
-              width: double.infinity,
-              child:
-            OSMFlutter(
-              controller: mapController,
-              trackMyPosition: true,
-              initZoom: 15,
-              stepZoom: 1.0,
-              userLocationMarker: UserLocationMaker(
-                personMarker: const MarkerIcon(
-                  icon: Icon(
-                    Icons.location_history_rounded,
-                    color: Colors.red,
-                    size: 48,
+                height: 300,
+                width: double.infinity,
+                child: OSMFlutter(
+                  controller: mapController,
+                  trackMyPosition: true,
+                  initZoom: 15,
+                  stepZoom: 1.0,
+                  userLocationMarker: UserLocationMaker(
+                    personMarker: const MarkerIcon(
+                      icon: Icon(
+                        Icons.location_history_rounded,
+                        color: Colors.red,
+                        size: 48,
+                      ),
+                    ),
+                    directionArrowMarker: const MarkerIcon(
+                      icon: Icon(
+                        Icons.double_arrow,
+                        size: 48,
+                      ),
+                    ),
                   ),
-                ),
-                directionArrowMarker: const MarkerIcon(
-                  icon: Icon(
-                    Icons.double_arrow,
-                    size: 48,
+                  roadConfiguration: const RoadOption(
+                    roadColor: Colors.yellowAccent,
                   ),
-                ),
-              ),
-              roadConfiguration: const RoadOption(
-                roadColor: Colors.yellowAccent,
-              ),
-              markerOption: MarkerOption(
-                  defaultMarker: const MarkerIcon(
-                icon: Icon(
-                  Icons.person_pin_circle,
-                  color: Colors.blue,
-                  size: 56,
-                ),
-              )),
-            ))
+                  markerOption: MarkerOption(
+                      defaultMarker: const MarkerIcon(
+                    icon: Icon(
+                      Icons.person_pin_circle,
+                      color: Colors.blue,
+                      size: 56,
+                    ),
+                  )),
+                ))
           ],
         )));
   }

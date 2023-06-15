@@ -76,11 +76,12 @@ class _CreateTaskPrepareState extends State<CreateTaskPrepare> {
       ),
       body: Column(
         children: [
-          const TextField(
-            style: TextStyle(
+           TextField(
+            controller: emailController,
+            style: const TextStyle(
               fontSize: 18,
             ),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Din email til besvarelser',
               helperText: 'Den email besvarelserne skal sendes til.',
               contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),

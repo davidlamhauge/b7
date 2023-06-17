@@ -20,8 +20,7 @@ class _CreateTaskState extends State<CreateTask> {
 //  final PopupController _popupController = PopupController();
   final MapController mapController = MapController(
     initMapWithUserPosition: false,
-//    initMapWithUserPosition: true,
-    initPosition: GeoPoint(latitude: 14.599512, longitude: 120.984222),
+    initPosition: GeoPoint(latitude: 55.72548, longitude: 9.10433),
     areaLimit: const BoundingBox.world(),
   );
   final double _zoom = 7;

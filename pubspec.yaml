@@ -39,7 +39,6 @@ dependencies:
   flutter_osm_plugin: ^0.53.4+1
   flutter_map: ^2.0.0
   latlong2: ^0.8.2
-  open_street_map_search_and_pick: ^0.0.12
 
 
 dev_dependencies:

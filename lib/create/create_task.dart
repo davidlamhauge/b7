@@ -1,9 +1,13 @@
+import 'package:b7/create/define_post.dart';
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:path_provider/path_provider.dart';
 
-//import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+
+/*
+Here you create the posts that the participants are going to visit.
+You can add as many as you want,
+ */
 
 class CreateTask extends StatefulWidget {
   const CreateTask({Key? key, required this.email, required this.id})
@@ -17,22 +21,22 @@ class CreateTask extends StatefulWidget {
 }
 
 class _CreateTaskState extends State<CreateTask> {
-//  final PopupController _popupController = PopupController();
-  final MapController mapController = MapController(
-    initMapWithUserPosition: false,
-    initPosition: GeoPoint(latitude: 55.72548, longitude: 9.10433),
-    areaLimit: const BoundingBox.world(),
-  );
-  final double _zoom = 7;
+  int postNr = 0; // number of post being created
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Opret opgave'),
-        ),
-        body: Center(
-            child: Column(
+      appBar: AppBar(
+        title: const Text('Opret opgave'),
+      ),
+      body: Center(
+        child: Column(
           children: [
             const SizedBox(height: 10),
             Center(
@@ -52,46 +56,42 @@ class _CreateTaskState extends State<CreateTask> {
                     ),
                   ),
                   Text(widget.id),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Poster oprettet: $postNr',
+                    style: const TextStyle(
+                      fontSize: 24,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DefinePost(
+                                num: postNr++,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Tilføj post...'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Færdig...'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            SizedBox(
-                height: 300,
-                width: double.infinity,
-                child: OSMFlutter(
-                  controller: mapController,
-                  trackMyPosition: true,
-                  initZoom: 15,
-                  stepZoom: 1.0,
-                  userLocationMarker: UserLocationMaker(
-                    personMarker: const MarkerIcon(
-                      icon: Icon(
-                        Icons.location_history_rounded,
-                        color: Colors.red,
-                        size: 48,
-                      ),
-                    ),
-                    directionArrowMarker: const MarkerIcon(
-                      icon: Icon(
-                        Icons.double_arrow,
-                        size: 48,
-                      ),
-                    ),
-                  ),
-                  roadConfiguration: const RoadOption(
-                    roadColor: Colors.yellowAccent,
-                  ),
-                  markerOption: MarkerOption(
-                      defaultMarker: const MarkerIcon(
-                    icon: Icon(
-                      Icons.person_pin_circle,
-                      color: Colors.blue,
-                      size: 56,
-                    ),
-                  )),
-                ))
           ],
-        )));
+        ),
+      ),
+    );
   }
 }

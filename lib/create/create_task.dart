@@ -17,14 +17,27 @@ class CreateTask extends StatefulWidget {
 }
 
 class _CreateTaskState extends State<CreateTask> {
-//  final PopupController _popupController = PopupController();
+
+  late final LatLng curPos;
+
   final MapController mapController = MapController(
     initMapWithUserPosition: false,
-//    initMapWithUserPosition: true,
     initPosition: GeoPoint(latitude: 14.599512, longitude: 120.984222),
     areaLimit: const BoundingBox.world(),
   );
+
   final double _zoom = 7;
+
+  void _getCurPos() async {
+    curPos = mapController.currentLocation() as LatLng;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _getCurPos();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,21 +78,6 @@ class _CreateTaskState extends State<CreateTask> {
                   trackMyPosition: true,
                   initZoom: 15,
                   stepZoom: 1.0,
-                  userLocationMarker: UserLocationMaker(
-                    personMarker: const MarkerIcon(
-                      icon: Icon(
-                        Icons.location_history_rounded,
-                        color: Colors.red,
-                        size: 48,
-                      ),
-                    ),
-                    directionArrowMarker: const MarkerIcon(
-                      icon: Icon(
-                        Icons.double_arrow,
-                        size: 48,
-                      ),
-                    ),
-                  ),
                   roadConfiguration: const RoadOption(
                     roadColor: Colors.yellowAccent,
                   ),

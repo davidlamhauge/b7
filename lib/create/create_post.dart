@@ -16,13 +16,9 @@ class _CreatePostState extends State<CreatePost> {
 
   final MapController mapController = MapController();
   late final LatLng curPos;
-/*
-  LatLng _getCurrentPosition() async {
-    ret
-  }
-*/
+
   @override
-  void initState() {
+  Future<void> initState() async {
     // TODO: implement initState
     super.initState();
   }
@@ -40,6 +36,7 @@ class _CreatePostState extends State<CreatePost> {
             width: double.infinity,
             child:
           FlutterMap(
+            mapController: mapController,
             options: MapOptions(
               center: LatLng(51.509364, -0.128928),
               zoom: 9.2,

@@ -54,7 +54,7 @@ class _CreateTaskState extends State<CreateTask> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreatePost(postNr: postNr),
+                        builder: (context) => CreatePost(postNr: postNr + 1),
                       ),
                     );
                   },

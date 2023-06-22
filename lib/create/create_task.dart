@@ -64,6 +64,7 @@ class _CreateTaskState extends State<CreateTask> {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
                         onPressed: () {
@@ -71,7 +72,7 @@ class _CreateTaskState extends State<CreateTask> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => DefinePost(
-                                num: postNr++,
+                                num: postNr + 1,
                               ),
                             ),
                           );

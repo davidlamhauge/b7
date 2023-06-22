@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
-import 'package:flutter_osm_interface/flutter_osm_interface.dart';
 
 class DefinePost extends StatefulWidget {
   const DefinePost({super.key, required this.num});
@@ -12,13 +11,30 @@ class DefinePost extends StatefulWidget {
 }
 
 class _DefinePostState extends State<DefinePost> {
+/*
   final MapController mapController = MapController(
     initMapWithUserPosition: false,
     initPosition: GeoPoint(latitude: 55.72548, longitude: 9.10433),
     areaLimit: const BoundingBox.world(),
   );
+*/
+  final MapController mapController = MapController(
+    initMapWithUserPosition: true,
+  );
 
   late final GeoPoint loc;
+
+  void _getCurLocation() async {
+    loc = mapController.currentLocation() as GeoPoint;
+  }
+
+  @override
+
+  void initState() {
+    // TODO: implement initState
+    _getCurLocation();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +44,7 @@ class _DefinePostState extends State<DefinePost> {
       ),
       body: Column(
         children: [
+          const Text('Kom nu...'),
           OSMFlutter(
             controller: mapController,
             initZoom: 12,
@@ -49,6 +66,8 @@ class _DefinePostState extends State<DefinePost> {
                 ),
               ),
             ),
+
+
             roadConfiguration: const RoadOption(
               roadColor: Colors.yellowAccent,
             ),

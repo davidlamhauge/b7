@@ -1,5 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
+
+class PostsDefined {
+  int numberOfPosts = 0;
+  GeoPoint lastLocation = GeoPoint(latitude: 9, longitude: 53);
+
+  // to be called when new post is accepted
+  _addPost() {
+    numberOfPosts++;
+  }
+
+  // to be called when existing post is deleted
+  subtractPost() {
+    numberOfPosts--;
+  }
+
+  int getNumberOfPosts() {
+    return numberOfPosts;
+  }
+}
 
 class CreatePost extends StatefulWidget {
   const CreatePost({super.key, required this.postNr});
@@ -12,7 +32,6 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
   final MapController mapController = MapController(
-
     initMapWithUserPosition: false,
     initPosition: GeoPoint(latitude: 47.4358055, longitude: 8.4737324),
     areaLimit: BoundingBox(
@@ -23,16 +42,28 @@ class _CreatePostState extends State<CreatePost> {
     ),
   );
 
-  late final GeoPoint curPos;
+  GeoPoint curPos = GeoPoint(latitude: 0, longitude: 0);
 
-  void _getCurLocation() async {
+  void _updateCurLocation() async {
     curPos = await mapController.currentLocation() as GeoPoint;
+  }
+
+  GeoPoint _getCurPos() {
+    _updateCurLocation();
+    return curPos;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    mapController.dispose();
+    super.dispose();
   }
 
   @override
   void initState() {
     // TODO: implement initState
-    _getCurLocation();
+    _updateCurLocation();
     super.initState();
   }
 
@@ -40,52 +71,81 @@ class _CreatePostState extends State<CreatePost> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Post # ${widget.postNr}'),
+        title: Text(
+          'Post # ${widget.postNr}',
+        ),
       ),
       body: Column(
         children: [
+          const SizedBox(height: 10),
+          Text(
+            'Post nr ${widget.postNr}',
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.purple,
+            ),
+          ),
+          const SizedBox(height: 10),
           SizedBox(
-            height: 300,
+            height: 250,
             width: double.infinity,
             child: OSMFlutter(
               controller: mapController,
               trackMyPosition: true,
+              isPicker: true,
               initZoom: 15,
               minZoomLevel: 8,
               maxZoomLevel: 18,
               stepZoom: 1.0,
-              userLocationMarker: UserLocationMaker(
-                personMarker: const MarkerIcon(
-                  icon: Icon(
-                    Icons.location_history_rounded,
-                    color: Colors.red,
-                    size: 48,
-                  ),
-                ),
-                directionArrowMarker: const MarkerIcon(
-                  icon: Icon(
-                    Icons.double_arrow,
-                    size: 48,
-                  ),
-                ),
-              ),
               roadConfiguration: const RoadOption(
                 roadColor: Colors.yellowAccent,
               ),
               markerOption: MarkerOption(
-                  defaultMarker: const MarkerIcon(
-                icon: Icon(
-                  Icons.person_pin_circle_sharp,
-                  color: Colors.blue,
-                  size: 56,
+                defaultMarker: const MarkerIcon(
+                  icon: Icon(
+                    Icons.person_pin_circle_sharp,
+                    color: Colors.blue,
+                    size: 80,
+                  ),
                 ),
-              )),
+              ),
             ),
           ),
+          Card(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const ListTile(
+                  leading: Icon(
+                      Icons.location_on,
+                  size: 30,
+                  ),
+                  title: Text(
+                    'Position:',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  'Længdegrad: ${curPos.latitude} ',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+                Text(
+                  'Breddegrad: ${curPos.longitude} ',
+                  style: const TextStyle(
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
   }
-
-  launchUrl(Uri parse) {}
 }

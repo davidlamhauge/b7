@@ -13,7 +13,6 @@ class CreateTask extends StatefulWidget {
 }
 
 class _CreateTaskState extends State<CreateTask> {
-  final int postNr = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +53,7 @@ class _CreateTaskState extends State<CreateTask> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreatePost(postNr: postNr + 1),
+                        builder: (context) => CreatePost(postNr: PostsDefined().getNumberOfPosts() + 1),
                       ),
                     );
                   },

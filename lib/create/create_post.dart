@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'dart:async';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
 class PostsDefined {
@@ -31,26 +32,31 @@ class CreatePost extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePost> {
-  final MapController mapController = MapController(
-    initMapWithUserPosition: false,
-    initPosition: GeoPoint(latitude: 47.4358055, longitude: 8.4737324),
-    areaLimit: BoundingBox(
-      east: 10.4922941,
-      north: 47.8084648,
-      south: 45.817995,
-      west: 5.9559113,
-    ),
-  );
 
-  GeoPoint curPos = GeoPoint(latitude: 0, longitude: 0);
+  final MapController mapController = MapController();
+
+  GeoPoint curPos = GeoPoint(latitude: 0.0, longitude: 0.0);
+  GeoPoint chosenPos = GeoPoint(latitude: 2.0, longitude: 2.0);
 
   void _updateCurLocation() async {
     curPos = await mapController.currentLocation() as GeoPoint;
   }
 
-  GeoPoint _getCurPos() {
-    _updateCurLocation();
-    return curPos;
+  void _setCurrentLocation(GeoPoint p) {
+    setState(() {
+      curPos = p;
+      chosenPos = p;
+    });
+  }
+
+  GeoPoint _getChosenPosition() {
+    return chosenPos;
+  }
+
+  void _setChosenLocation(GeoPoint p) {
+    setState(() {
+      chosenPos = p;
+    });
   }
 
   @override
@@ -64,6 +70,7 @@ class _CreatePostState extends State<CreatePost> {
   void initState() {
     // TODO: implement initState
     _updateCurLocation();
+    _setCurrentLocation(curPos);
     super.initState();
   }
 
@@ -77,39 +84,33 @@ class _CreatePostState extends State<CreatePost> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: 250,
-            width: double.infinity,
-            child: OSMFlutter(
-              controller: mapController,
-              trackMyPosition: true,
-              isPicker: true,
-              initZoom: 15,
-              minZoomLevel: 8,
-              maxZoomLevel: 18,
-              stepZoom: 1.0,
-              roadConfiguration: const RoadOption(
-                roadColor: Colors.yellowAccent,
-              ),
-              markerOption: MarkerOption(
-                defaultMarker: const MarkerIcon(
-                  icon: Icon(
-                    Icons.person_pin_circle_sharp,
-                    color: Colors.blue,
-                    size: 80,
-                  ),
-                ),
-              ),
+          ElevatedButton(
+              onPressed: () async {
+                var p = await showSimplePickerLocation(
+                  context: context,
+                  isDismissible: false,
+                  title: 'Vælg postens placering',
+                  textConfirmPicker: 'Vælg',
+                  minZoomLevel: 12,
+                  maxZoomLevel: 18,
+                  initZoom: 16,
+                  initPosition: chosenPos,
+                  initCurrentUserPosition: false,
+                );
+                if (p != null) {
+                  _setCurrentLocation(p);
+                }
+              },
+              child: const Text('Show picker address'),
             ),
-          ),
           Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const ListTile(
                   leading: Icon(
-                      Icons.location_on,
-                  size: 30,
+                    Icons.location_on,
+                    size: 30,
                   ),
                   title: Text(
                     'Position:',
@@ -135,7 +136,7 @@ class _CreatePostState extends State<CreatePost> {
             ),
           ),
           const Spacer(flex: 10),
-        ],
+          ],
       ),
     );
   }

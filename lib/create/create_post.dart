@@ -72,21 +72,11 @@ class _CreatePostState extends State<CreatePost> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Post # ${widget.postNr}',
+          'Post nr ${widget.postNr}',
         ),
       ),
       body: Column(
         children: [
-          const SizedBox(height: 10),
-          Text(
-            'Post nr ${widget.postNr}',
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.purple,
-            ),
-          ),
-          const SizedBox(height: 10),
           SizedBox(
             height: 250,
             width: double.infinity,
@@ -143,7 +133,8 @@ class _CreatePostState extends State<CreatePost> {
                 ),
               ],
             ),
-          )
+          ),
+          const Spacer(flex: 10),
         ],
       ),
     );

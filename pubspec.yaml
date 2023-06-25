@@ -40,6 +40,7 @@ dependencies:
   latlong2: ^0.8.2
   flutter_osm_plugin: ^0.53.4+1
   location_picker_flutter_map: ^1.2.1
+  shared_preferences: ^2.1.2
 
 dev_dependencies:
   flutter_test:

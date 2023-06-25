@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
-import 'dart:async';
-import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
+import 'package:b7/post_position.dart';
 
 class PostsDefined {
   int numberOfPosts = 0;
-  GeoPoint lastLocation = GeoPoint(latitude: 9, longitude: 53);
 
   // to be called when new post is accepted
   _addPost() {
@@ -33,29 +31,34 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
 
-  final MapController mapController = MapController();
+  final PostPosition postPosition = PostPosition();
 
-  GeoPoint curPos = GeoPoint(latitude: 0.0, longitude: 0.0);
-  GeoPoint chosenPos = GeoPoint(latitude: 2.0, longitude: 2.0);
+  final MapController mapController = MapController(
+    initMapWithUserPosition: false,
+    initPosition: GeoPoint(latitude: 55.7198, longitude: 8.6075),
+  );
 
-  void _updateCurLocation() async {
-    curPos = await mapController.currentLocation() as GeoPoint;
+  GeoPoint curLoc = GeoPoint(latitude: 55.7198, longitude: 8.6075);
+
+  void _initCurLocation() async {
+    curLoc = await _getSavedStartPos();
+    _setCurrentLocation(curLoc);
+  }
+
+  Future<GeoPoint> _getSavedStartPos() async {
+    String txt = await postPosition.read();
+    if (!txt.contains('error')) {
+      final splitted = txt.split('#');
+      return GeoPoint(latitude: double.parse(splitted[0]),
+          longitude: double.parse(splitted[1]));
+    } else {
+      return curLoc;
+    }
   }
 
   void _setCurrentLocation(GeoPoint p) {
     setState(() {
-      curPos = p;
-      chosenPos = p;
-    });
-  }
-
-  GeoPoint _getChosenPosition() {
-    return chosenPos;
-  }
-
-  void _setChosenLocation(GeoPoint p) {
-    setState(() {
-      chosenPos = p;
+      curLoc = p;
     });
   }
 
@@ -69,13 +72,15 @@ class _CreatePostState extends State<CreatePost> {
   @override
   void initState() {
     // TODO: implement initState
-    _updateCurLocation();
-    _setCurrentLocation(curPos);
+    _initCurLocation();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (curLoc == GeoPoint(latitude: 55.7198, longitude: 8.6075)) {
+      _initCurLocation();
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -85,24 +90,24 @@ class _CreatePostState extends State<CreatePost> {
       body: Column(
         children: [
           ElevatedButton(
-              onPressed: () async {
-                var p = await showSimplePickerLocation(
-                  context: context,
-                  isDismissible: false,
-                  title: 'Vælg postens placering',
-                  textConfirmPicker: 'Vælg',
-                  minZoomLevel: 12,
-                  maxZoomLevel: 18,
-                  initZoom: 16,
-                  initPosition: chosenPos,
-                  initCurrentUserPosition: false,
-                );
-                if (p != null) {
-                  _setCurrentLocation(p);
-                }
-              },
-              child: const Text('Show picker address'),
-            ),
+            onPressed: () async {
+              var p = await showSimplePickerLocation(
+                context: context,
+                isDismissible: false,
+                title: 'Vælg postens placering',
+                textConfirmPicker: 'Vælg',
+                minZoomLevel: 2,
+                maxZoomLevel: 18,
+                initZoom: 16,
+                initCurrentUserPosition: false,
+                initPosition: curLoc,
+              );
+              if (p != null) {
+                _setCurrentLocation(p);
+              }
+            },
+            child: const Text('Vælg postens placering'),
+          ),
           Card(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -113,7 +118,7 @@ class _CreatePostState extends State<CreatePost> {
                     size: 30,
                   ),
                   title: Text(
-                    'Position:',
+                    'Position for Post:',
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -121,13 +126,13 @@ class _CreatePostState extends State<CreatePost> {
                   ),
                 ),
                 Text(
-                  'Længdegrad: ${curPos.latitude} ',
+                  'Længdegrad: ${curLoc.latitude} ',
                   style: const TextStyle(
                     fontSize: 18,
                   ),
                 ),
                 Text(
-                  'Breddegrad: ${curPos.longitude} ',
+                  'Breddegrad: ${curLoc.longitude} ',
                   style: const TextStyle(
                     fontSize: 18,
                   ),
@@ -135,8 +140,7 @@ class _CreatePostState extends State<CreatePost> {
               ],
             ),
           ),
-          const Spacer(flex: 10),
-          ],
+        ],
       ),
     );
   }

@@ -21,8 +21,9 @@ class PostsDefined {
 }
 
 class CreatePost extends StatefulWidget {
-  const CreatePost({super.key, required this.postNr});
+  const CreatePost({super.key, required this.id, required this.postNr});
 
+  final String id;
   final int postNr;
 
   @override
@@ -31,7 +32,11 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
 
+  final PostsDefined postsDefined = PostsDefined();
   final PostPosition postPosition = PostPosition();
+  final TaskPath taskPath = TaskPath(); // for saving posts as they are defined
+
+  final TextEditingController textEditingController = TextEditingController();
 
   final MapController mapController = MapController(
     initMapWithUserPosition: false,
@@ -66,6 +71,7 @@ class _CreatePostState extends State<CreatePost> {
   void dispose() {
     // TODO: implement dispose
     mapController.dispose();
+    textEditingController.dispose();
     super.dispose();
   }
 
@@ -73,6 +79,7 @@ class _CreatePostState extends State<CreatePost> {
   void initState() {
     // TODO: implement initState
     _initCurLocation();
+    taskPath.createTaskFile(widget.id);
     super.initState();
   }
 
@@ -112,14 +119,14 @@ class _CreatePostState extends State<CreatePost> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const ListTile(
-                  leading: Icon(
+                ListTile(
+                  leading: const Icon(
                     Icons.location_on,
                     size: 30,
                   ),
                   title: Text(
-                    'Position for Post:',
-                    style: TextStyle(
+                    'Position for Post ${widget.postNr}:',
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
@@ -139,6 +146,21 @@ class _CreatePostState extends State<CreatePost> {
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 50),
+          const Text(
+              'Opgavetekst:',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextField(
+            controller: textEditingController,
+            keyboardType: TextInputType.multiline,
+            minLines: 1,
+            maxLines: 6,
+            maxLength: 250,
           ),
         ],
       ),

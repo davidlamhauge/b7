@@ -18,7 +18,7 @@ class _CreateTaskState extends State<CreateTask> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Opret opgave'),
+        title: const Text('Godkend email og id'),
       ),
       body: Center(
         child: Column(
@@ -44,21 +44,16 @@ class _CreateTaskState extends State<CreateTask> {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreatePost(postNr: PostsDefined().getNumberOfPosts() + 1),
-                      ),
-                    );
+                    Navigator.pop(context);
                   },
                   child: const Text(
-                    'Opret ny Post',
+                    'Tilbage',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white,
@@ -66,9 +61,16 @@ class _CreateTaskState extends State<CreateTask> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreatePost(id: widget.id, postNr: PostsDefined().getNumberOfPosts() + 1),
+                      ),
+                    );
+                  },
                   child: const Text(
-                    'Alle poster oprettet!',
+                    'Godkend',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.white,

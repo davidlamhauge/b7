@@ -94,7 +94,7 @@ class _MyHomeState extends State<MyHome> {
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 50),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -151,7 +151,6 @@ class _MyHomeState extends State<MyHome> {
                       color: Colors.white,
                     ),
                   )),
-              Text('${curLoc.latitude}\n${curLoc.longitude}'),
               const Spacer(),
               const Image(
                 image: AssetImage('assets/b7bundlogo.png'),

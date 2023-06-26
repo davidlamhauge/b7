@@ -76,7 +76,7 @@ class _CreateTaskPrepareState extends State<CreateTaskPrepare> {
       ),
       body: Column(
         children: [
-           TextField(
+          TextField(
             controller: emailController,
             style: const TextStyle(
               fontSize: 18,
@@ -110,11 +110,13 @@ class _CreateTaskPrepareState extends State<CreateTaskPrepare> {
                 ? ElevatedButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) =>  CreateTask(email: returnEmail, id: taskId)
-                          ),
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                CreateTask(email: returnEmail, id: taskId)),
                       );
-                    }, child: const Text('OK'),
+                    },
+                    child: const Text('OK'),
                   )
                 : const SizedBox(width: 20),
           ]),

@@ -1,5 +1,7 @@
 import 'package:b7/create/create_post.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 class CreateTask extends StatefulWidget {
   const CreateTask({Key? key, required this.email, required this.id})
@@ -13,6 +15,27 @@ class CreateTask extends StatefulWidget {
 }
 
 class _CreateTaskState extends State<CreateTask> {
+
+  String sti = '';
+
+  static Future<String> createFolderInAppDocDir(String folderName) async {
+
+    //Get this App Document Directory
+    final Directory appDocDir = await getApplicationDocumentsDirectory();
+    //App Document Directory + folder name
+    final Directory appDocDirFolder =  Directory('${appDocDir.path}/$folderName/');
+
+    if(await appDocDirFolder.exists()){ //if folder already exists return path
+      return appDocDirFolder.path;
+    }else{//if folder not exists create folder and then return its path
+      final Directory appDocDirNewFolder=await appDocDirFolder.create(recursive: true);
+      return appDocDirNewFolder.path;
+    }
+  }
+
+  void _callFolderCreationMethod(String id) async {
+    sti = await createFolderInAppDocDir(id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +64,7 @@ class _CreateTaskState extends State<CreateTask> {
                     ),
                   ),
                   Text(widget.id),
+                  Text(sti),
                 ],
               ),
             ),
@@ -62,6 +86,7 @@ class _CreateTaskState extends State<CreateTask> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    _callFolderCreationMethod(widget.id);
                     Navigator.push(
                       context,
                       MaterialPageRoute(

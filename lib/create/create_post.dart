@@ -31,7 +31,7 @@ class CreatePost extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePost> {
-
+  int textLength = 0;
   final PostsDefined postsDefined = PostsDefined();
   final PostPosition postPosition = PostPosition();
   final TaskPath taskPath = TaskPath(); // for saving posts as they are defined
@@ -54,7 +54,8 @@ class _CreatePostState extends State<CreatePost> {
     String txt = await postPosition.read();
     if (!txt.contains('error')) {
       final splitted = txt.split('#');
-      return GeoPoint(latitude: double.parse(splitted[0]),
+      return GeoPoint(
+          latitude: double.parse(splitted[0]),
           longitude: double.parse(splitted[1]));
     } else {
       return curLoc;
@@ -64,6 +65,12 @@ class _CreatePostState extends State<CreatePost> {
   void _setCurrentLocation(GeoPoint p) {
     setState(() {
       curLoc = p;
+    });
+  }
+
+  void _updateTextLength() {
+    setState(() {
+      textLength = textEditingController.text.length;
     });
   }
 
@@ -78,9 +85,10 @@ class _CreatePostState extends State<CreatePost> {
   @override
   void initState() {
     // TODO: implement initState
+    super.initState();
     _initCurLocation();
     taskPath.createTaskFile(widget.id);
-    super.initState();
+    textEditingController.addListener(_updateTextLength);
   }
 
   @override
@@ -149,7 +157,7 @@ class _CreatePostState extends State<CreatePost> {
           ),
           const SizedBox(height: 50),
           const Text(
-              'Opgavetekst:',
+            'Opgavetekst:',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -161,7 +169,19 @@ class _CreatePostState extends State<CreatePost> {
             minLines: 1,
             maxLines: 6,
             maxLength: 250,
+            decoration: const InputDecoration(
+              helperText: 'Skriv opgaven her. Max 250 anslag.',
+              fillColor: Color.fromARGB(40, 10, 30, 150),
+              filled: true,
+            ),
           ),
+          const SizedBox(height: 30),
+          textLength > 10
+              ? ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Gem Post'),
+                )
+              : const SizedBox(height: 5),
         ],
       ),
     );

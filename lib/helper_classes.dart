@@ -31,8 +31,17 @@ class PostPosition {
 
 }
 
-// path to task in directory
+/*
+TaskPath = path to task in ApplicationDocumentsDirectory
+File contains these lines:
+[0] id, email
+[1] Post descriptions for Post 1
+[2] Post descriptions for Post 2
+etc. to end of file...
+ */
+
 class TaskPath {
+  String fileName = '';
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -41,17 +50,18 @@ class TaskPath {
 
   void createTaskFile(String id) async {
     final path = await _localPath;
-    File('$path/$id.b7').createSync(recursive: true);
+    fileName = '$path/$id.b7';
+    File(fileName).createSync(recursive: true);
   }
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File('$path/startpos.txt');
+    return File(fileName);
   }
 
   write(String text) async {
     final File file = await _localFile;
-    await file.writeAsString(text);
+    await file.writeAsString(text, mode: FileMode.append);
   }
 
   Future<String> read() async {
@@ -65,3 +75,5 @@ class TaskPath {
   }
 
 }
+
+

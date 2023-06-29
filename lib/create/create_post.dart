@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
-import 'package:b7/post_position.dart';
+import 'package:b7/helper_classes.dart';
 
 class PostsDefined {
   int numberOfPosts = 0;
@@ -21,8 +21,10 @@ class PostsDefined {
 }
 
 class CreatePost extends StatefulWidget {
-  const CreatePost({super.key, required this.id, required this.postNr});
+  const CreatePost(
+      {super.key, required this.id, required this.email, required this.postNr});
 
+  final String email;
   final String id;
   final int postNr;
 
@@ -31,6 +33,9 @@ class CreatePost extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePost> {
+  String finalText = '';
+  String allSummedUp = '';
+
   int textLength = 0;
   final PostsDefined postsDefined = PostsDefined();
   final PostPosition postPosition = PostPosition();
@@ -74,6 +79,14 @@ class _CreatePostState extends State<CreatePost> {
     });
   }
 
+  void _updateFinalText(String txt) {
+    finalText += txt;
+  }
+
+  String _getFinalText() {
+    return finalText;
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -88,7 +101,9 @@ class _CreatePostState extends State<CreatePost> {
     super.initState();
     _initCurLocation();
     taskPath.createTaskFile(widget.id);
+    taskPath.write('${widget.id}§${widget.email}\n');
     textEditingController.addListener(_updateTextLength);
+    postsDefined._addPost();
   }
 
   @override
@@ -99,7 +114,7 @@ class _CreatePostState extends State<CreatePost> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Post nr ${widget.postNr}',
+          'Post nr ${postsDefined.numberOfPosts}',
         ),
       ),
       body: Column(
@@ -133,7 +148,7 @@ class _CreatePostState extends State<CreatePost> {
                     size: 30,
                   ),
                   title: Text(
-                    'Position for Post ${widget.postNr}:',
+                    'Position for Post ${postsDefined.numberOfPosts}:',
                     style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -155,14 +170,15 @@ class _CreatePostState extends State<CreatePost> {
               ],
             ),
           ),
-          const SizedBox(height: 50),
-          const Text(
-            'Opgavetekst:',
-            style: TextStyle(
+          const SizedBox(height: 30),
+          Text(
+            'Opgavetekst til Post ${postsDefined.numberOfPosts}:',
+            style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(height: 10),
           TextField(
             controller: textEditingController,
             keyboardType: TextInputType.multiline,
@@ -175,13 +191,69 @@ class _CreatePostState extends State<CreatePost> {
               filled: true,
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
           textLength > 10
               ? ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Gem Post'),
+                  onPressed: () {
+                    String txt = textEditingController.text;
+                    String task =
+                        '${postsDefined.numberOfPosts}§${curLoc.latitude}§${curLoc.longitude}§$txt\n|';
+                    _updateFinalText(task);
+                    // write: Post number, latitude, longitude, task text
+//                    taskPath.write('${postsDefined.numberOfPosts}§${curLoc.latitude}§${curLoc.longitude}§$txt\n');
+                    taskPath.write(task);
+                    textEditingController.clear();
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Post nr ${postsDefined.numberOfPosts - 1}:',
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.purple,
+                                  ),
+                                ),
+                                Text(
+                                    'Location: ${curLoc.latitude.toStringAsFixed(4)}, ${curLoc.longitude.toStringAsFixed(4)}'),
+                                Text('Spørgsmål: $txt'),
+                              ],
+                            ),
+                          );
+                        });
+                    postsDefined._addPost();
+                  },
+                  child: Text('Gem Post ${postsDefined.numberOfPosts}'),
                 )
               : const SizedBox(height: 5),
+          ElevatedButton(
+            onPressed: () {
+              allSummedUp = '';
+              String s = _getFinalText();
+              List<String> strList = s.split('|');
+              List<String> details = strList[0].split('§');
+/*              for (int i = 0; i < strList.length; i++) {
+                List<String> details = strList[i].split('§');
+                allSummedUp +=
+                    'Post ${details[0]}\nLokation ${double.parse(details[1]).toStringAsFixed(3)},'
+                    ' ${double.parse(details[2]).toStringAsFixed(3)}\nOpgave:\n${details[3]}';
+              } */
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      content: Text(details.length as String),
+                    );
+                  });
+              Navigator.popUntil(context, (route) => route.isFirst);
+            },
+            child: const Text('Ikke flere poster!'),
+          ),
+          const Spacer(),
         ],
       ),
     );

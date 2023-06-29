@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:b7/create/create_task_prepare.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
-import 'package:b7/post_position.dart';
+import 'package:b7/helper_classes.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:b7/send/send_task.dart';
 import 'package:b7/perform/perform_task.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then((fn) {
+    runApp(const MaterialApp(
+      home: MyApp(),
+    ));
+  });
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -32,11 +42,7 @@ class _MyHomeState extends State<MyHome> {
   );
 
   GeoPoint curLoc = GeoPoint(latitude: 55.7198, longitude: 8.6075);
-  PostPosition postPosition = PostPosition();
-
-  void _initCurLocation() async {
-    curLoc = await mapController.currentLocation() as GeoPoint;
-  }
+  PostPosition postPosition = PostPosition(); // init location for posts
 
   void _setCurrentLocation(GeoPoint p) {
     setState(() {
@@ -44,13 +50,28 @@ class _MyHomeState extends State<MyHome> {
     });
   }
 
+  void _getStartPosition() async {
+    String s1 = await postPosition.read();
+    if (!s1.contains('error')) {
+      List<String> s2 = s1.split('#');
+      curLoc = GeoPoint(
+          latitude: double.parse(s2[0]), longitude: double.parse(s2[1]));
+    }
+  }
+
   void _saveStartPosition() {
     postPosition.write('${curLoc.latitude}#${curLoc.longitude}');
   }
-  
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getStartPosition();
+  }
+
   @override
   Widget build(BuildContext context) {
-    _initCurLocation();
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -71,7 +92,11 @@ class _MyHomeState extends State<MyHome> {
                   var p = await showSimplePickerLocation(
                     context: context,
                     isDismissible: false,
-                    title: 'Vælg generel placering',
+                    title: 'Generel start-lokation:',
+                    titleStyle: const TextStyle(
+                      fontSize: 22,
+                      color: Colors.blue,
+                    ),
                     textConfirmPicker: 'Vælg',
                     minZoomLevel: 2,
                     maxZoomLevel: 18,
@@ -86,7 +111,7 @@ class _MyHomeState extends State<MyHome> {
                   }
                 },
                 child: const Text(
-                  'Posternes startposition',
+                  'Generel start-lokation',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
@@ -94,7 +119,7 @@ class _MyHomeState extends State<MyHome> {
                   ),
                 ),
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 80),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
@@ -110,7 +135,7 @@ class _MyHomeState extends State<MyHome> {
                     );
                   },
                   child: const Text(
-                    'Opret opgave',
+                    'Opret opgave/aktivitet',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
@@ -127,7 +152,7 @@ class _MyHomeState extends State<MyHome> {
                   ),
                   onPressed: () {},
                   child: const Text(
-                    'Send opgave',
+                    'Send opgave/aktivitet',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
@@ -136,21 +161,22 @@ class _MyHomeState extends State<MyHome> {
                   )),
               const SizedBox(height: 10),
               ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    minimumSize: const Size(300, 32),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Udfør opgave',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                      color: Colors.white,
-                    ),
-                  )),
+                  minimumSize: const Size(300, 32),
+                ),
+                onPressed: () {},
+                child: const Text(
+                  'Udfør opgave/aktivitet',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
               const Spacer(),
               const Image(
                 image: AssetImage('assets/b7bundlogo.png'),

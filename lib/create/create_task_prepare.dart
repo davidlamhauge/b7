@@ -101,25 +101,35 @@ class _CreateTaskPrepareState extends State<CreateTaskPrepare> {
             ),
           ),
           const SizedBox(height: 20),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Fortryd...'),
-            ),
-            taskId.isNotEmpty
-                ? ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CreateTask(email: returnEmail, id: taskId)),
-                      );
-                    },
-                    child: const Text('OK'),
-                  )
-                : const SizedBox(width: 20),
-          ]),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Fortryd...'),
+              ),
+              taskId.isNotEmpty
+                  ? ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  CreateTask(email: returnEmail, id: taskId)),
+                        );
+                      },
+                      child: const Text('OK'),
+                    )
+                  : const SizedBox(width: 20),
+            ],
+          ),
+          const Spacer(),
+          const Image(
+            image: AssetImage('assets/b7bundlogo.png'),
+            fit: BoxFit.fitWidth,
+          ),
         ],
       ),
     );

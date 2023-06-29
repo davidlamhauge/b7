@@ -90,7 +90,7 @@ class _CreateTaskState extends State<CreateTask> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreatePost(id: widget.id, postNr: PostsDefined().getNumberOfPosts() + 1),
+                        builder: (context) => CreatePost(id: widget.id, email: widget.email, postNr: PostsDefined().getNumberOfPosts() + 1),
                       ),
                     );
                   },
@@ -103,6 +103,11 @@ class _CreateTaskState extends State<CreateTask> {
                   ),
                 ),
               ],
+            ),
+            const Spacer(),
+            const Image(
+              image: AssetImage('assets/b7bundlogo.png'),
+              fit: BoxFit.fitWidth,
             ),
           ],
         ),

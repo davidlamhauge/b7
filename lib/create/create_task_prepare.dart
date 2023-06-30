@@ -126,10 +126,6 @@ class _CreateTaskPrepareState extends State<CreateTaskPrepare> {
             ],
           ),
           const Spacer(),
-          const Image(
-            image: AssetImage('assets/b7bundlogo.png'),
-            fit: BoxFit.fitWidth,
-          ),
         ],
       ),
     );

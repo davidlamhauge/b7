@@ -1,7 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-// position that picker starts, when creating posts for the run
+/*
+Location that picker starts at, when creating posts for the run
+Is set on main screen
+ */
+
 class PostPosition {
 
   Future<String> get _localPath async {
@@ -32,7 +37,7 @@ class PostPosition {
 }
 
 /*
-TaskPath = path to task in ApplicationDocumentsDirectory
+PostStorage = for storing id, email and Posts in ApplicationDocumentsDirectory
 File contains these lines:
 [0] id, email
 [1] Post descriptions for Post 1
@@ -40,7 +45,8 @@ File contains these lines:
 etc. to end of file...
  */
 
-class TaskPath {
+class PostStorage {
+  File file = File('');
   String fileName = '';
 
   Future<String> get _localPath async {
@@ -48,32 +54,33 @@ class TaskPath {
     return directory.path;
   }
 
-  void createTaskFile(String id) async {
-    final path = await _localPath;
-    fileName = '$path/$id.b7';
-    File(fileName).createSync(recursive: true);
-  }
-
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File(fileName);
+    return File('$path/$fileName');
   }
 
-  write(String text) async {
-    final File file = await _localFile;
-    await file.writeAsString(text, mode: FileMode.append);
+  Future<String> createStorageFile(String name) async {
+    fileName = name;
+    final path = await _localPath;
+    File('$path/$fileName').create(recursive: true);
+    return '$path/$fileName';
   }
 
-  Future<String> read() async {
+  void writeToStorageFile(String txt) async {
+    final file = await _localFile;
+    // Write txt to file
+    file.writeAsString(txt);
+  }
+
+  Future<String> readFromStorageFile() async {
     try {
-      final File file = await _localFile;
-      final text = await file.readAsString();
-      return text;
+      final file = await _localFile;
+      // Read the file
+      final contents = await file.readAsString();
+      return contents;
     } catch (e) {
+      // If encountering an error, return 'error'
       return 'error';
     }
   }
-
 }
-
-

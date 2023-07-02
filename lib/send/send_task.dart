@@ -66,21 +66,23 @@ class _SendTaskState extends State<SendTask> {
       appBar: AppBar(
         title: const Text('Send opgave'),
       ),
-      body: Column(
-        children: [
-          ElevatedButton(
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context){
-                      return AlertDialog(
-                        content: Text(alertText),
-                      );
-                    });
-              },
-              child: const Text('Hent filliste'),
-          )
-        ],
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context){
+                        return AlertDialog(
+                          content: Text(alertText),
+                        );
+                      });
+                },
+                child: const Text('Hent filliste'),
+            )
+          ],
+        ),
       ),
     );
   }

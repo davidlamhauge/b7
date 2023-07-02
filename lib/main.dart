@@ -150,7 +150,13 @@ class _MyHomeState extends State<MyHome> {
                     ),
                     minimumSize: const Size(300, 32),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                        builder: (context) => const SendTask()),
+                    );
+                  },
                   child: const Text(
                     'Send opgave/aktivitet',
                     style: TextStyle(

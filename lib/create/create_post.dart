@@ -1,5 +1,4 @@
-//import 'dart:html';
-
+import 'package:b7/create/pick_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:b7/helper_classes.dart';
@@ -13,7 +12,7 @@ class PostsDefined {
   }
 
   // to be called when existing post is deleted
-  subtractPost() {
+  _subtractPost() {
     numberOfPosts--;
   }
 
@@ -35,17 +34,17 @@ class CreatePost extends StatefulWidget {
 }
 
 class _CreatePostState extends State<CreatePost> {
-
   String finalText = '';
   String allSummedUp = '';
 
   bool idEmailWrittenToFile = false;
-  int textLength = 0;
+  int textLength = 0; // length of text in TextField
 
   final PostsDefined postsDefined = PostsDefined();
   final PostPosition postPosition = PostPosition();
 
-  final PostStorage postStorage = PostStorage(); // for saving posts as they are defined
+  final PostStorage postStorage =
+      PostStorage(); // for saving posts as they are defined
 
   final TextEditingController textEditingController = TextEditingController();
 
@@ -93,6 +92,17 @@ class _CreatePostState extends State<CreatePost> {
     return finalText;
   }
 
+  void _getPostLocation(BuildContext context) async {
+    final point = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PickLocation(curLoc: curLoc),
+        ));
+    setState(() {
+      curLoc = point;
+    });
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -106,8 +116,7 @@ class _CreatePostState extends State<CreatePost> {
     // TODO: implement initState
     super.initState();
     _initCurLocation();
-    Future<String> s = postStorage.createStorageFile('${widget.id}.b7');
-    print(s);
+    postStorage.createStorageFile('${widget.id}.b7');
     textEditingController.addListener(_updateTextLength);
     postsDefined._addPost();
   }
@@ -126,23 +135,11 @@ class _CreatePostState extends State<CreatePost> {
       body: Column(
         children: [
           ElevatedButton(
-            onPressed: () async {
-              var p = await showSimplePickerLocation(
-                context: context,
-                isDismissible: false,
-                title: 'Vælg postens placering',
-                textConfirmPicker: 'Vælg',
-                minZoomLevel: 2,
-                maxZoomLevel: 18,
-                initZoom: 16,
-                initCurrentUserPosition: false,
-                initPosition: curLoc,
-              );
-              if (p != null) {
-                _setCurrentLocation(p);
-              }
+            onPressed: () {
+              _getPostLocation(context);
             },
-            child: const Text('Vælg postens placering'),
+            child: Text(
+                'Vælg lokation for post nr: ${postsDefined.numberOfPosts}'),
           ),
           Card(
             child: Column(
@@ -204,69 +201,38 @@ class _CreatePostState extends State<CreatePost> {
                     String txt = textEditingController.text;
                     String task =
                         '${postsDefined.numberOfPosts}§${curLoc.latitude}§${curLoc.longitude}§$txt\n|';
-                    _updateFinalText(task);
-
                     if (!idEmailWrittenToFile) {
-                      print('in addpost bool: false Id = ${widget.id}');
-                      // write: Post id and return email
-                      postStorage.writeToStorageFile('${widget.id}§${widget.email}\n|');
-                      // write: Post number, latitude, longitude, task text
-                      postStorage.writeToStorageFile(task);
+                      task =
+                          '${widget.id}§${widget.email}\n|${postsDefined.numberOfPosts}§${curLoc.latitude}§${curLoc.longitude}§$txt\n|';
                       idEmailWrittenToFile = true;
-                    } else {
-                      // write: Post number, latitude, longitude, task text
-                      print('in addpost bool: true Id = ${widget.id}');
-                      postStorage.writeToStorageFile(task);
                     }
-                    textEditingController.clear();
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Post nr ${postsDefined.numberOfPosts - 1}:',
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.purple,
-                                  ),
-                                ),
-                                Text(
-                                    'Location: ${curLoc.latitude.toStringAsFixed(4)}, ${curLoc.longitude.toStringAsFixed(4)}'),
-                                Text('Spørgsmål: $txt'),
-                              ],
-                            ),
-                          );
-                        });
+                    _updateFinalText(task);
+                    postStorage.writeToStorageFile(task);
                     postsDefined._addPost();
+                    if (mounted) {
+                      textEditingController.clear();
+                    }
                   },
                   child: Text('Gem Post ${postsDefined.numberOfPosts}'),
                 )
               : const SizedBox(height: 5),
           ElevatedButton(
             onPressed: () {
-              print('TESTING!');
+              postsDefined._subtractPost();
               allSummedUp = '';
               String s = _getFinalText();
               List<String> strList = s.split('|');
               for (int i = 0; i < strList.length; i++) {
                 List<String> details = strList[i].split('§');
-                print('strList[0]: ${strList[0]}');
-                print('strList[1]: ${strList[1]}');
-                print('strList[2]: ${strList[2]}');
-                print('strlist længde: ${strList.length}');
-                if (details.length < 4) {
+                if (details.isEmpty) {
+                } else if (details.length == 2) {
                   allSummedUp +=
-                  'Opgave-id: ${details[0]}\nEmail: ${details[1]}';
-                } else if(details.length == 4) {
+                      'Opgave-id: ${details[0]}\nEmail: ${details[1]}\n';
+                } else if (details.length == 4) {
                   allSummedUp +=
-                  'Post ${details[0]}\nLokation ${double.parse(details[1]).toStringAsFixed(3)},'
+                      'Post ${details[0]}\nLokation ${double.parse(details[1]).toStringAsFixed(3)},'
                       ' ${double.parse(details[2]).toStringAsFixed(3)}\nOpgave:\n${details[3]}';
                 }
-                details.clear();
               }
               showDialog(
                   context: context,

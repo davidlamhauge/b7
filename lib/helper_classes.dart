@@ -59,11 +59,10 @@ class PostStorage {
     return File('$path/$fileName');
   }
 
-  Future<String> createStorageFile(String name) async {
+  void createStorageFile(String name) async {
     fileName = name;
     final path = await _localPath;
     File('$path/$fileName').create(recursive: true);
-    return '$path/$fileName';
   }
 
   void writeToStorageFile(String txt) async {

@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+
 
 /*
 Location that picker starts at, when creating posts for the run
@@ -43,10 +43,11 @@ File contains these lines:
 [1] Post descriptions for Post 1
 [2] Post descriptions for Post 2
 etc. to end of file...
+
+NB! Can be used for many other text-file types!!!
  */
 
 class PostStorage {
-  File file = File('');
   String fileName = '';
 
   Future<String> get _localPath async {
@@ -62,7 +63,7 @@ class PostStorage {
   void createStorageFile(String name) async {
     fileName = name;
     final path = await _localPath;
-    File('$path/$fileName').create(recursive: true);
+    File('$path/$fileName').create();
   }
 
   void writeToStorageFile(String txt) async {

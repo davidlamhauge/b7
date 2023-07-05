@@ -1,6 +1,9 @@
-import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:b7/send/get_mail_list.dart';
+import 'dart:io';
+
 
 class SendTask extends StatefulWidget {
   const SendTask({super.key});
@@ -15,6 +18,63 @@ class _SendTaskState extends State<SendTask> {
   List<String> strList = [];
   List<String> filNavne = [];
   String alertText = '';
+
+  var buttons = <Widget>[];
+
+  Widget _getWidget() {
+    if (buttons.isNotEmpty) {
+      return Column(
+        children: [
+          for (var btn in buttons)
+            btn
+        ],
+      );
+    } else {
+      return const Text(
+        'Ingen *.b7 filer at vise',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Widget getBody() {
+    return Column(
+      children: [
+        const SizedBox(height: 30),
+        const Text(
+            'Vælg opgave der skal sendes:',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.purple,
+          ),
+        ),
+        const SizedBox(height: 20),
+        _getWidget(),
+      ]
+    );
+  }
+
+  Widget returnButton(String short, String long) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+            context, MaterialPageRoute(
+            builder: (context) =>
+        GetMailList(kort: short, lang: long)));
+      },
+      child: Text(
+          short,
+        style: const TextStyle(
+          fontSize: 16,
+        ),
+      ),
+    );
+  }
 
   // this works!
   void _createAlertText() {
@@ -33,7 +93,6 @@ class _SendTaskState extends State<SendTask> {
         filNavne.add('$txt\n');
       }
     }
-//    print('Filnavne: $filNavne Antal: ${filNavne.length}');
   }
 
   // this works
@@ -41,16 +100,22 @@ class _SendTaskState extends State<SendTask> {
     strList.clear();
     final directory = await getApplicationDocumentsDirectory();
     await for (var entity
-        in directory.list(recursive: true, followLinks: false)) {
+        in directory.list(recursive: false, followLinks: false)) {
       strList.add(entity.path);
     }
-//    print('dir: $strList Antal: ${strList.length}');
   }
 
   void _lateInit() async {
     await getDir();
     filNavneList();
     _createAlertText();
+    buttons.clear();
+    for (int i = 0; i < filNavne.length; i++) {
+      List<String> tmp = filNavne[i].split('/');
+      setState(() {
+        buttons.add(returnButton(tmp.last, filNavne[i]));
+      });
+    }
   }
 
   @override
@@ -66,24 +131,12 @@ class _SendTaskState extends State<SendTask> {
       appBar: AppBar(
         title: const Text('Send opgave'),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context){
-                        return AlertDialog(
-                          content: Text(alertText),
-                        );
-                      });
-                },
-                child: const Text('Hent filliste'),
-            )
-          ],
-        ),
+      body: SingleChildScrollView(
+          child: Center(
+              child: getBody(),
+          ),
       ),
     );
   }
 }
+

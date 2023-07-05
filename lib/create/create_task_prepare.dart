@@ -26,8 +26,8 @@ class _CreateTaskPrepareState extends State<CreateTaskPrepare> {
   final emailController = TextEditingController();
 
   void _requestAppDocDir() {
-    setState(() {
-      _appDocDir = getApplicationDocumentsDirectory();
+    setState(() async {
+      _appDocDir = (await getApplicationDocumentsDirectory()) as Future<Directory?>?;
     });
   }
 

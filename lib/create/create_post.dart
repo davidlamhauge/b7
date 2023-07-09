@@ -43,8 +43,8 @@ class _CreatePostState extends State<CreatePost> {
   final PostsDefined postsDefined = PostsDefined();
   final PostPosition postPosition = PostPosition();
 
-  final PostStorage postStorage =
-      PostStorage(); // for saving posts as they are defined
+  // for saving posts as they are defined
+  final FileHandler fileHandler = FileHandler('');
 
   final TextEditingController textEditingController = TextEditingController();
 
@@ -116,7 +116,7 @@ class _CreatePostState extends State<CreatePost> {
     // TODO: implement initState
     super.initState();
     _initCurLocation();
-    postStorage.createStorageFile('${widget.id}.b7');
+    fileHandler.createFile('${widget.id}.b7');
     textEditingController.addListener(_updateTextLength);
     postsDefined._addPost();
   }
@@ -207,7 +207,7 @@ class _CreatePostState extends State<CreatePost> {
                       idEmailWrittenToFile = true;
                     }
                     _updateFinalText(task);
-                    postStorage.writeToStorageFile(task);
+                    fileHandler.writeToFile(task);
                     postsDefined._addPost();
                     if (mounted) {
                       textEditingController.clear();

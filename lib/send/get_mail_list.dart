@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:b7/send/send_helper_file.dart';
+import 'package:b7/send/import_mail_list.dart';
 
 class GetMailList extends StatefulWidget {
   const GetMailList({super.key, required this.kort, required this.lang});
@@ -16,10 +16,12 @@ class _GetMailListState extends State<GetMailList> {
   bool mailListChosen = false;
   int chosen = 0;
 
-  Widget _setChosen(int i) {
+  Future<Widget> _setChosen(int i) async {
     switch (i) {
       case 1: // importer mail-liste fra filsystem
-        return const ImportMailList();
+      final mailListAsString = await Navigator.push(context, MaterialPageRoute(builder: (context) => const ImportMailList()));
+      print('Mailliste: ${mailListAsString.toString()}');
+      return mailListAsString;
       case 2: // hent tidligere oprettet csv-fil i Document-directory
         return const Column(
           children: [
@@ -81,7 +83,7 @@ class _GetMailListState extends State<GetMailList> {
                       ElevatedButton(
                         onPressed: () {
                           _setMailListChosen();
-                          _setChosenNumber(1);
+                          _setChosen(1);
                           const SingleChildScrollView(
                             child: Text('Importer'),
                           );
@@ -114,9 +116,6 @@ class _GetMailListState extends State<GetMailList> {
                       ),
                     ],
                   ),
-            mailListChosen
-                ? _setChosen(chosen):
-                const SizedBox(height: 10),
             const Spacer(),
           ],
         ),

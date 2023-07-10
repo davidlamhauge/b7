@@ -4,13 +4,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:b7/helper_classes.dart';
 import 'dart:io';
 
-/*
-      case 1: // importer og returnerer mail-liste fra filsystem som String
-      case 2: // hent tidligere oprettet csv-fil i Document-directory
-      case 3: // opret ny csv-fil der gemmes til Document-directory
-      case 4: // Skriv emailadresse, og send til en ad gangen
- */
-// case 1: importer og returnerer mail-liste fra filsystem som String
+
+// importer og returnerer mail-liste fra filsystem som String
 
 class ImportMailList extends StatefulWidget {
   const ImportMailList({super.key});
@@ -20,50 +15,61 @@ class ImportMailList extends StatefulWidget {
 }
 
 class _ImportMailListState extends State<ImportMailList> {
-  String directory = '';
   String returnString = ''; // String to return
-  List fil = [];
 
-  // Make New Function
-  void _listofFiles() async {
-    Directory directory = await getApplicationDocumentsDirectory();
-    setState(() {
-      fil = directory.listSync();
-    });
+  void _setReturnString(String s) {
+      returnString = s;
   }
 
-  Future<String> returnCsvContent() async {
+  Future<File> _saveToAppDir(PlatformFile file) async {
+    final appDir = await getApplicationDocumentsDirectory();
+    final cacheFile = File('${appDir.path}/${file.name}');
+    return File(file.path!).copy(cacheFile.path);
+  }
+  
+  void getCsvContent() async {
     final pickedFile = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
       allowedExtensions: ['csv'],
+      initialDirectory: getApplicationDocumentsDirectory().toString(),
     );
     if (pickedFile != null) {
-      print('Mailliste før return: ${pickedFile.names.first.toString()}');
-      return pickedFile.names.first.toString();
+      final file = pickedFile.files.first;
+      final newFile = await _saveToAppDir(file);
+      print('newFile: ${newFile.path}');
+      String txt = await newFile.readAsString();
+      print('Mailliste før return: ${txt.toString()}');
+      _setReturnString(txt);
+      FilePickerStatus.done;
+    } else {
+      returnString = 'error';
+      FilePickerStatus.done;
     }
-    return 'error';
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _listofFiles();
+    getCsvContent();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ElevatedButton(
-          onPressed: ()  {
-            returnCsvContent();
-            Navigator.pop(context, returnString);
-          },
-          child: const Text('Vælg mail-liste af typen *.csv'),
-        ),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Importer mail-liste (*.csv)'),
+      ),
+      body: Column(
+        children: [
+          ElevatedButton(
+            onPressed: () =>
+              Navigator.of(context).pop(returnString),
+            child: const Text('Returner mail-liste'),
+          ),
+        ],
+      ),
     );
   }
 }

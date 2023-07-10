@@ -1,3 +1,4 @@
+import 'package:b7/send/get_saved_mail_list.dart';
 import 'package:flutter/material.dart';
 import 'package:b7/send/import_mail_list.dart';
 
@@ -12,42 +13,37 @@ class GetMailList extends StatefulWidget {
 }
 
 class _GetMailListState extends State<GetMailList> {
-
   bool mailListChosen = false;
   int chosen = 0;
+  String mailListe = '';
 
-  Future<Widget> _setChosen(int i) async {
+  Future<String> _setChosen(int i) async {
     switch (i) {
       case 1: // importer mail-liste fra filsystem
-      final mailListAsString = await Navigator.push(context, MaterialPageRoute(builder: (context) => const ImportMailList()));
-      print('Mailliste: ${mailListAsString.toString()}');
-      return mailListAsString;
+        final result = await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ImportMailList()));
+        mailListe = result.toString();
+        print('Mailliste retur: ${result.toString()}');
+        return result;
       case 2: // hent tidligere oprettet csv-fil i Document-directory
-        return const Column(
-          children: [
-            Text('Nr 2'),
-          ],
-        );
+        return 'txt';
       case 3: // opret ny csv-fil der gemmes til Document-directory
-        return const Column(
-          children: [
-            Text('Nr 3'),
-          ],
-        );
+        return 'txt';
       case 4: // Skriv emailadresse, og send til en ad gangen
-        return const Column(
-          children: [
-            Text('Nr 4'),
-          ],
-        );
+        return 'txt';
       default:
-        return const Text('Hmm. Noget gik galt!');
-
+        return 'ERROR';
     }
   }
 
   void _setChosenNumber(int i) {
     chosen = i;
+  }
+
+  void _updateMaillist(String txt) {
+    setState(() {
+      mailListe = txt;
+    });
   }
 
   void _setMailListChosen() {
@@ -81,22 +77,23 @@ class _GetMailListState extends State<GetMailList> {
                 : Column(
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          _setMailListChosen();
-                          _setChosen(1);
-                          const SingleChildScrollView(
-                            child: Text('Importer'),
-                          );
+                        onPressed: () async {
+                          final result = await Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => const ImportMailList()));
+                          _updateMaillist(result.toString());
+                          print('Mailliste returneret: $mailListe');
                         },
                         child: const Text('Importer mail-liste'),
                       ),
                       const SizedBox(height: 10),
                       ElevatedButton(
-                        onPressed: () {
-                          _setMailListChosen();
-                          _setChosenNumber(2);
+                        onPressed: () async {
+                          final result = await Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => const GetSavedMailList()));
+                          _updateMaillist(result.toString());
+                          print('Gemt Mailliste returneret: $mailListe');
                         },
-                        child: const Text('Hent tidligere oprettet mail-liste'),
+                        child: const Text('Hent oprettet/importeret mail-liste'),
                       ),
                       const SizedBox(height: 10),
                       ElevatedButton(

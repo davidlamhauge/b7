@@ -65,6 +65,7 @@ class FileHandler {
       cacheDir.deleteSync(recursive: true);
     }
   }
+
   // get applicationDocumentDirectory
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -106,7 +107,7 @@ class FileHandler {
   Future<File> saveImportedCsvFilePermanently() async {
     final importedFile = await importCsvFile();
     File newFile = File('$importedFile');
-    File saveFile = File(importedFile!.paths.first!).copy(newFile.path) as File;
+    final saveFile = File(importedFile!.paths.first!).copy(newFile.path);
     print('This is MAYBE deleted: ${newFile.path}');
     print('This is new file: $saveFile');
     _deleteCacheDir();

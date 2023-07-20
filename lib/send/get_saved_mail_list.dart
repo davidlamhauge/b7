@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -20,11 +19,6 @@ class _GetSavedMailListState extends State<GetSavedMailList> {
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
-  }
-
-  void _listOfFiles() async {
-    directory = await _localPath;
-    files = Directory(directory).listSync();
   }
 
   void _setReturnString(List<String> s) {
@@ -55,20 +49,32 @@ class _GetSavedMailListState extends State<GetSavedMailList> {
   }
 
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Hent mail-liste'),
-    ),
-    body: Column(
-      children: [
-        ElevatedButton(
-          onPressed: () =>
-              Navigator.of(context).pop(csvFiles),
-          child: const Text('Hent mail-liste'),
-        ),
-      ],
-    ),
-  );
-}}
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Hent mail-liste'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () =>
+                Navigator.of(context).pop(csvFiles),
+            child: const Text('Returner mail-liste'),
+          ),
+
+          const Text(
+            'Tryk på knappen - Mailliste er hentet!',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.purple,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:b7/send/get_mail_list.dart';
-import 'dart:io';
 
 
 class SendTask extends StatefulWidget {
@@ -15,7 +14,7 @@ class SendTask extends StatefulWidget {
 class _SendTaskState extends State<SendTask> {
 
   String directory = '';
-  List<String> strList = [];
+  List<String> b7List = [];
   List<String> filNavne = [];
   String alertText = '';
 
@@ -88,7 +87,7 @@ class _SendTaskState extends State<SendTask> {
   // this works!
   void filNavneList() {
     filNavne.clear();
-    for (var txt in strList) {
+    for (var txt in b7List) {
       if (txt.endsWith('b7')) {
         filNavne.add('$txt\n');
       }
@@ -97,22 +96,22 @@ class _SendTaskState extends State<SendTask> {
 
   // this works
   Future<void> getDir() async {
-    strList.clear();
+    b7List.clear();
     final directory = await getApplicationDocumentsDirectory();
     await for (var entity
         in directory.list(recursive: false, followLinks: false)) {
-      strList.add(entity.path);
+      b7List.add(entity.path);
     }
   }
 
   void _lateInit() async {
-    await getDir();
-    filNavneList();
-    _createAlertText();
-    buttons.clear();
+    await getDir(); // gets files from appDocDir
+    filNavneList(); // moves *.b7 files to strList
+    _createAlertText(); // creates string with filenames of *.b7
+    buttons.clear(); // clears buttons Widget-array
     for (int i = 0; i < filNavne.length; i++) {
       List<String> tmp = filNavne[i].split('/');
-      setState(() {
+      setState(() {  // sets state with filename and absolute path
         buttons.add(returnButton(tmp.last, filNavne[i]));
       });
     }

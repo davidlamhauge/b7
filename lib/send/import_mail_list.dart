@@ -1,7 +1,7 @@
+import 'package:b7/helper_classes.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:b7/helper_classes.dart';
 import 'dart:io';
 
 
@@ -18,7 +18,9 @@ class _ImportMailListState extends State<ImportMailList> {
   String returnString = ''; // String to return
 
   void _setReturnString(String s) {
+    setState(() {
       returnString = s;
+    });
   }
 
   Future<File> _saveToAppDir(PlatformFile file) async {
@@ -26,7 +28,11 @@ class _ImportMailListState extends State<ImportMailList> {
     final cacheFile = File('${appDir.path}/${file.name}');
     return File(file.path!).copy(cacheFile.path);
   }
-  
+
+  void getAndSaveCsvFile() {
+//    FileHandler fileHandler = FileHandler();
+  }
+
   void getCsvContent() async {
     final pickedFile = await FilePicker.platform.pickFiles(
       allowMultiple: false,

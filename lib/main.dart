@@ -1,12 +1,18 @@
+/*
+Conventions since *.txt files are easy to work with:
+(All files are placed in application document directory)
+
+File for startposition is called startpos.txt
+Task-files have the format *.b7.txt
+Csv files with mail-addresses have the format *.csv.txt
+ */
+
 import 'package:flutter/material.dart';
 import 'package:b7/create/create_task_prepare.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:b7/helper_classes.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:b7/send/send_task.dart';
-import 'package:b7/perform/perform_task.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +42,7 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
+
   final MapController mapController = MapController(
     initMapWithUserPosition: false,
     initPosition: GeoPoint(latitude: 55.7198, longitude: 8.6075),

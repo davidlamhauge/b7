@@ -26,7 +26,7 @@ class _ImportMailListState extends State<ImportMailList> {
   Future<File> _saveToAppDir(PlatformFile file) async {
     final appDir = await getApplicationDocumentsDirectory();
     final cacheFile = File('${appDir.path}/${file.name}');
-    return File(file.path!).copy(cacheFile.path);
+    return File(file.path!).copy('${cacheFile.path}.txt');
   }
 
   void getAndSaveCsvFile() {

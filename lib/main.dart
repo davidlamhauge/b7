@@ -44,7 +44,6 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> {
 
   final MapController mapController = MapController(
-    initMapWithUserPosition: false,
     initPosition: GeoPoint(latitude: 55.7198, longitude: 8.6075),
   );
 
@@ -108,7 +107,6 @@ class _MyHomeState extends State<MyHome> {
                     minZoomLevel: 2,
                     maxZoomLevel: 18,
                     initZoom: 16,
-                    initCurrentUserPosition: false,
                     initPosition: GeoPoint(
                         latitude: curLoc.latitude, longitude: curLoc.longitude),
                   );

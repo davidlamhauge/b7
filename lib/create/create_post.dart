@@ -49,7 +49,6 @@ class _CreatePostState extends State<CreatePost> {
   final TextEditingController textEditingController = TextEditingController();
 
   final MapController mapController = MapController(
-    initMapWithUserPosition: false,
     initPosition: GeoPoint(latitude: 55.7198, longitude: 8.6075),
   );
 

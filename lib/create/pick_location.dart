@@ -44,7 +44,6 @@ class _PickLocationState extends State<PickLocation> {
                 minZoomLevel: 2,
                 maxZoomLevel: 18,
                 initZoom: 16,
-                initCurrentUserPosition: false,
                 initPosition: widget.curLoc,
               );
               _locationChanged(p!);
